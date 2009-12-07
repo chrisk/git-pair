@@ -5,6 +5,7 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "git-pair"
+    gem.version = File.read("lib/git-pair/VERSION").strip
     gem.summary = %Q{Configure git to commit as more than one author}
     gem.description = %Q{Configure git to commit as more than one author}
     gem.email = "chris@kampers.net"

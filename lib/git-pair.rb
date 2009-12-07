@@ -2,8 +2,11 @@ $bold, $reverse, $red, $reset = "\e[1m", "\e[7m", "\e[91m", "\e[0m"
 
 module GitPair
 
+  VERSION = File.read(File.join(File.dirname(__FILE__), "git-pair", "VERSION")).strip
+
   class NoMatchingAuthorsError < ArgumentError; end
   class MissingConfigurationError < RuntimeError; end
+
 
   module Commands
     def add(name)
