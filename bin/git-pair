@@ -1,0 +1,48 @@
+#!/usr/bin/env ruby
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
+
+require 'optparse'
+require 'git-pair'
+
+begin
+  banner = "\n#{$reverse} Configuration: #{$reset}"
+  parser = OptionParser.new do |opts|
+    opts.banner = banner
+    opts.separator "  git pair [options]"
+    opts.on("-a", "--add NAME",    "Add an author. Use the full name.")    { |name| GitPair::Commands.add name }
+    opts.on("-r", "--remove NAME", "Remove an author. Use the full name.") { |name| GitPair::Commands.remove name }
+    opts.on("-e", "--set-email TEMPLATE", "Set the email template. A value like devs@example.com",
+                                          "will be interpolated with the current authors' initials",
+                                          "into something like devs+aa+bb@example.com.") { |email| GitPair::Commands.set_email_template email }
+
+    opts.separator " "
+    opts.separator ["#{$reverse} Switching authors: #{$reset}",
+                    "  git pair AA [BB]                   Where AA and BB are any abbreviation of an",
+                    " "*37 + "author's name. You can specify one or more authors."]
+
+    opts.separator " "
+    opts.separator ["#{$reverse} Current config: #{$reset}",
+                    *(GitPair::Helpers.display_string_for_config.split("\n") + [" "] +
+                      GitPair::Helpers.display_string_for_current_info.split("\n"))]
+  end
+
+  unused_options = parser.parse!
+
+  if GitPair::Commands.config_change_made?
+    puts GitPair::Helpers.display_string_for_config
+  elsif unused_options.any?
+    GitPair::Commands.switch(unused_options)
+    puts GitPair::Helpers.display_string_for_current_info
+  elsif ARGV.empty?
+    puts parser.help
+  end
+
+rescue OptionParser::MissingArgument
+  GitPair::Helpers.abort "missing required argument", parser.help
+rescue OptionParser::InvalidOption, OptionParser::InvalidArgument => e
+  GitPair::Helpers.abort e.message.sub(':', ''), parser.help
+rescue GitPair::NoMatchingAuthorsError => e
+  GitPair::Helpers.abort e.message, "\n" + GitPair::Helpers.display_string_for_config
+rescue GitPair::MissingConfigurationError => e
+  GitPair::Helpers.abort e.message, parser.help
+end
