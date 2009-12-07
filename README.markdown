@@ -31,17 +31,21 @@ out their names, the current pair, and some other information.
 ## Known issues
 
 * I just shoved everything into a gem. Refactor into separate files.
-* Needs `git pair --reset` to restore the original `user.name` and `user.email`.
-  For now, just `git config --edit` and remove the `[user]` section to go back
-  to your global config.
+* Don't add duplicate authors to the git-config (doesn't affect the proper
+  functioning of git-pair, but makes `git pair --add` not idempotent and
+  clutters up your config file if you keep adding the same person).
+* OMG no tests. Write a cucumber suite.
+
+## Feature hit list
+
 * It'd be better if you could specify an email address for each author instead
   of just automatically using the authors' initials. Especially if you have two
   authors with the same initials. And also because when there's just one author,
   it should use that person's email instead of an interpolation like
   `devs+ck@example.com`.
-* Don't add duplicate authors to the git-config (doesn't affect the proper
-  functioning of git-pair, but makes `git pair --add` not idempotent and
-  clutters up your config file).
+* Needs `git pair --reset` to restore the original `user.name` and `user.email`.
+  For now, just `git config --edit` and remove the `[user]` section to go back
+  to your global config.
 
 ## License
 
