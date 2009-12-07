@@ -6,8 +6,10 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "git-pair"
     gem.version = File.read("lib/git-pair/VERSION").strip
-    gem.summary = %Q{Configure git to commit as more than one author}
-    gem.description = %Q{Configure git to commit as more than one author}
+    gem.summary = "Configure git to commit as more than one author"
+    gem.description = "A git porcelain for pair programming. Changes " +
+                      "git-config's user.name and user.email settings so you " +
+                      "can commit as more than one author."
     gem.email = "chris@kampers.net"
     gem.homepage = "http://github.com/chrisk/git-pair"
     gem.authors = ["Chris Kampmeier"]
