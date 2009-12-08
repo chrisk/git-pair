@@ -34,7 +34,7 @@ out their names, the current pair, and some other information.
 * Don't add duplicate authors to the git-config (doesn't affect the proper
   functioning of git-pair, but makes `git pair --add` not idempotent and
   clutters up your config file if you keep adding the same person).
-* OMG no tests. Write a cucumber suite.
+* Test coverage is low -- I'm working on a cucumber suite.
 
 ## Feature hit list
 
