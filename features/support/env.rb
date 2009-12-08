@@ -4,6 +4,7 @@ World(Test::Unit::Assertions)
 
 
 module RepositoryHelper
+  # TODO: use 1.8.7's Dir.mktmpdir?
   REPO_PATH = File.join(Dir::tmpdir, "git-pair-test-repo")
   REPO_GIT_DIR = File.join(REPO_PATH, ".git")
   GIT_PAIR  = File.expand_path(File.join(File.dirname(__FILE__), "../../bin/git-pair"))
