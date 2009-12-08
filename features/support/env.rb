@@ -12,6 +12,10 @@ module RepositoryHelper
     output = `GIT_DIR=#{REPO_GIT_DIR} && #{GIT_PAIR} #{options} 2>&1`
     output.gsub(/\e\[\d\d?m/, '')  # strip any ANSI colors
   end
+
+  def git_config
+    `GIT_DIR=#{REPO_GIT_DIR} && git config --list 2>&1`
+  end
 end
 
 World(RepositoryHelper)

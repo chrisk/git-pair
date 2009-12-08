@@ -33,7 +33,8 @@ out their names, the current pair, and some other information.
 * I just shoved everything into a gem. Refactor into separate files.
 * Don't add duplicate authors to the git-config (doesn't affect the proper
   functioning of git-pair, but makes `git pair --add` not idempotent and
-  clutters up your config file if you keep adding the same person).
+  clutters up your config file if you keep adding the same person). There's a
+  failing test for this now.
 * Test coverage is low -- I'm working on a cucumber suite.
 
 ## Feature hit list
