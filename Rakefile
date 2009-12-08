@@ -32,3 +32,7 @@ rescue LoadError
 end
 
 task :default => :features
+
+# Don't print commands when shelling out (for example, running Cucumber)
+RakeFileUtils.verbose(false)
+
