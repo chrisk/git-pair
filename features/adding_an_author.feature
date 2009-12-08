@@ -3,6 +3,10 @@ Feature: Adding an author
   A user should be able to
   add a name to the list of authors
 
+  Scenario: adding a name
+    When I add an author named "Linus Torvalds"
+    Then `git pair` should display "Linus Torvalds" in its author list
+
   Scenario: adding the same name twice
     When I add an author named "Linus Torvalds"
     And I add an author named "Linus Torvalds"
