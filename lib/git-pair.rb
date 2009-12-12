@@ -9,14 +9,23 @@ module GitPair
 
 
   module Commands
-    def add(name)
+    def add(new_name)
       @config_changed = true
-      `git config --add git-pair.authors "#{name}"`
+      names = Helpers.author_names.push(new_name).sort.uniq
+      remove_all
+      names.each do |name|
+        `git config --add git-pair.authors "#{name}"`
+      end
     end
 
     def remove(name)
       @config_changed = true
       `git config --unset-all git-pair.authors "^#{name}$"`
+    end
+
+    def remove_all
+      @config_changed = true
+      `git config --unset-all git-pair.authors`
     end
 
     def set_email_template(email)
