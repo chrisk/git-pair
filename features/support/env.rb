@@ -17,16 +17,29 @@ module RepositoryHelper
   def git_config
     `GIT_DIR=#{REPO_GIT_DIR} && git config --list 2>&1`
   end
+
+  def backup_global_gitconfig
+    FileUtils.cp File.expand_path('~/.gitconfig'),
+                 File.expand_path('~/.gitconfig.bak')
+  end
+
+  def restore_global_gitconfig
+    FileUtils.cp File.expand_path('~/.gitconfig.bak'),
+                 File.expand_path('~/.gitconfig')
+    FileUtils.rm File.expand_path('~/.gitconfig.bak')
+  end
 end
 
 World(RepositoryHelper)
 
 
 Before do
+  backup_global_gitconfig
   FileUtils.mkdir_p RepositoryHelper::REPO_PATH
   `GIT_DIR=#{RepositoryHelper::REPO_GIT_DIR} && git init`
 end
 
 After do
   FileUtils.rm_rf RepositoryHelper::REPO_PATH
+  restore_global_gitconfig
 end
