@@ -1,8 +1,11 @@
-$bold, $reverse, $red, $reset = "\e[1m", "\e[7m", "\e[91m", "\e[0m"
+C_BOLD, C_REVERSE, C_RED, C_RESET = "\e[1m", "\e[7m", "\e[91m", "\e[0m"
 
 module GitPair
 
   VERSION = File.read(File.join(File.dirname(__FILE__), "git-pair", "VERSION")).strip
+
+  C_BOLD, C_REVERSE, C_RED, C_RESET = "\e[1m", "\e[7m", "\e[91m", "\e[0m"
+
 
   class NoMatchingAuthorsError < ArgumentError; end
   class MissingConfigurationError < RuntimeError; end
@@ -59,13 +62,13 @@ module GitPair
 
   module Helpers
     def display_string_for_config
-      "#{$bold}  Email template: #{$reset}" + email("[aa]", "[bb]") + "\n" +
-      "#{$bold}     Author list: #{$reset}" + author_names.join("\n                  ")
+      "#{C_BOLD}  Email template: #{C_RESET}" + email("[aa]", "[bb]") + "\n" +
+      "#{C_BOLD}     Author list: #{C_RESET}" + author_names.join("\n                  ")
     end
 
     def display_string_for_current_info
-      "#{$bold}  Current author: #{$reset}" + current_author + "\n" +
-      "#{$bold}   Current email: #{$reset}" + current_email + "\n "
+      "#{C_BOLD}  Current author: #{C_RESET}" + current_author + "\n" +
+      "#{C_BOLD}   Current email: #{C_RESET}" + current_email + "\n "
     end
 
     def author_names
@@ -108,7 +111,7 @@ module GitPair
     end
 
     def abort(error_message, extra = "")
-      super "#{$red}#{$reverse} Error: #{error_message} #{$reset}\n" + extra
+      super "#{C_RED}#{C_REVERSE} Error: #{error_message} #{C_RESET}\n" + extra
     end
 
     extend self

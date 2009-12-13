@@ -5,7 +5,7 @@ require 'optparse'
 require 'git-pair'
 
 begin
-  banner = "\n#{$reverse} Configuration: #{$reset}"
+  banner = "\n#{GitPair::C_REVERSE} Configuration: #{GitPair::C_RESET}"
   parser = OptionParser.new do |opts|
     opts.banner = banner
     opts.separator "  git pair [options]"
@@ -16,12 +16,12 @@ begin
                                           "into something like devs+aa+bb@example.com.") { |email| GitPair::Commands.set_email_template email }
 
     opts.separator " "
-    opts.separator ["#{$reverse} Switching authors: #{$reset}",
+    opts.separator ["#{GitPair::C_REVERSE} Switching authors: #{GitPair::C_RESET}",
                     "  git pair AA [BB]                   Where AA and BB are any abbreviation of an",
                     " "*37 + "author's name. You can specify one or more authors."]
 
     opts.separator " "
-    opts.separator ["#{$reverse} Current config: #{$reset}",
+    opts.separator ["#{GitPair::C_REVERSE} Current config: #{GitPair::C_RESET}",
                     *(GitPair::Helpers.display_string_for_config.split("\n") + [" "] +
                       GitPair::Helpers.display_string_for_current_info.split("\n"))]
   end
