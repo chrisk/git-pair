@@ -12,28 +12,23 @@ module GitPair
 
 
   module Commands
-    def add(new_name)
+    def add(author_string)
       @config_changed = true
-      names = Helpers.author_names.push(new_name).sort.uniq
+      authors = Helpers.author_strings_with_new(author_string)
       remove_all
-      names.each do |name|
-        `git config --add git-pair.authors "#{name}"`
+      authors.each do |name_and_email|
+        `git config --add git-pair.authors "#{name_and_email}"`
       end
     end
 
     def remove(name)
       @config_changed = true
-      `git config --unset-all git-pair.authors "^#{name}$"`
+      `git config --unset-all git-pair.authors "^#{name} <"`
     end
 
     def remove_all
       @config_changed = true
       `git config --unset-all git-pair.authors`
-    end
-
-    def set_email_template(email)
-      @config_changed = true
-      `git config git-pair.email "#{email}"`
     end
 
     def config_change_made?
@@ -42,7 +37,6 @@ module GitPair
 
     def switch(abbreviations)
       raise MissingConfigurationError, "Please add some authors first" if Helpers.author_names.empty?
-      raise MissingConfigurationError, "Please set the email template first" if Helpers.email_template.empty?
 
       names = abbreviations.map { |abbrev|
         name = Helpers.author_name_from_abbreviation(abbrev)
@@ -52,8 +46,8 @@ module GitPair
 
       sorted_names = names.uniq.sort_by { |name| name.split.last }
       `git config user.name "#{sorted_names.join(' + ')}"`
-      initials = sorted_names.map { |name| name.split.map { |word| word[0].chr }.join.downcase }
-      `git config user.email "#{Helpers.email(*initials)}"`
+
+      # TODO: prompt for email if not already known
     end
 
     extend self
@@ -62,7 +56,6 @@ module GitPair
 
   module Helpers
     def display_string_for_config
-      "#{C_BOLD}  Email template: #{C_RESET}" + email("[aa]", "[bb]") + "\n" +
       "#{C_BOLD}     Author list: #{C_RESET}" + author_names.join("\n                  ")
     end
 
@@ -71,18 +64,27 @@ module GitPair
       "#{C_BOLD}   Current email: #{C_RESET}" + current_email + "\n "
     end
 
+    def author_strings
+      `git config --get-all git-pair.authors`.split("\n")
+    end
+
+    def author_strings_with_new(author_string)
+      strings = author_strings.push(author_string)
+
+      strings.reject! { |str|
+        !strings.one? { |s| parse_author_string(s).first == parse_author_string(str).first }
+      }
+      strings.push(author_string) if !strings.include?(author_string)
+      strings.sort_by { |str| parse_author_string(str).first }
+    end
+
     def author_names
-      names = `git config --get-all git-pair.authors`.split("\n")
-      names.uniq.sort_by { |name| name.split.last }
+      author_strings.map { |line| parse_author_string(line).first }.sort_by { |name| name.split.last }
     end
 
     def email(*initials_list)
       initials_string = initials_list.map { |initials| "+#{initials}" }.join
-      email_template.sub("@", "#{initials_string}@")
-    end
-
-    def email_template
-      `git config --get git-pair.email`.strip
+      'dev@example.com'.sub("@", "#{initials_string}@")
     end
 
     def current_author
@@ -108,6 +110,11 @@ module GitPair
       author_names.detect do |name|
         name =~ /#{abbrev.split("").join(".*")}/i
       end
+    end
+
+    def parse_author_string(author_string)
+      author_string =~ /^(.+)\s+<([^>]+)>$/
+      [$1, $2]
     end
 
     def abort(error_message, extra = "")
