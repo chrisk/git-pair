@@ -1,5 +1,5 @@
-When /^I add an author named "([^\"]*)"$/ do |name|
-  git_pair '--add "Linus Torvalds"'
+When /^I add the author "([^\"]*)"$/ do |name|
+  git_pair %(--add "#{name}")
 end
 
 Then /^`git pair` should display "([^\"]*)" in its author list$/ do |name|
