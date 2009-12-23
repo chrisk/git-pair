@@ -3,6 +3,10 @@ Feature: Switching authors
   A user should be able to
   change the currently active pair
 
+  Scenario: No authors have been added
+    When I try to switch to the pair "AA BB"
+    Then the last command's output should include "Please add some authors first"
+
   Scenario: Two authors with similar emails
     Given I have added the author "Linus Torvalds <linus@example.org>"
     And I have added the author "Junio C Hamano <junio@example.org>"

@@ -10,8 +10,8 @@ When /^I remove the name "([^\"]*)"$/ do |name|
   git_pair %(--remove "#{name}")
 end
 
-When /^I switch to the pair "([^\"]*)"$/ do |abbreviations|
-  git_pair abbreviations
+When /^I (?:try to )?switch to the pair "([^\"]*)"$/ do |abbreviations|
+  @output = git_pair abbreviations
 end
 
 Then /^`git pair` should display "([^\"]*)" in its author list$/ do |name|
@@ -57,6 +57,10 @@ end
 Then /^`git pair` should display an empty author list$/ do
   output = git_pair
   assert authors_list_from_output(output).empty?
+end
+
+Then /^the last command's output should include "([^\"]*)"$/ do |output|
+  assert @output.include?(output)
 end
 
 def authors_list_from_output(output)
