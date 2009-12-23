@@ -23,14 +23,15 @@ begin
                       GitPair::Helpers.display_string_for_current_info.split("\n"))]
   end
 
-  unused_options = parser.parse!
+  unused_options = parser.parse!.dup
+  ARGV.clear
 
   if GitPair::Commands.config_change_made?
     puts GitPair::Helpers.display_string_for_config
   elsif unused_options.any?
     GitPair::Commands.switch(unused_options)
     puts GitPair::Helpers.display_string_for_current_info
-  elsif ARGV.empty?
+  else
     puts parser.help
   end
 
