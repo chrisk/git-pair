@@ -47,7 +47,12 @@ module GitPair
       sorted_names = names.uniq.sort_by { |name| name.split.last }
       `git config user.name "#{sorted_names.join(' + ')}"`
 
-      # TODO: prompt for email if not already known
+      puts "Switching to #{sorted_names.join(' + ')}."
+      puts "Please enter a unique email address for this pair."
+      puts "Something like ____ is suggested."
+      print "Email: "
+      email = gets
+      `git config user.email "#{email}"`
     end
 
     extend self
