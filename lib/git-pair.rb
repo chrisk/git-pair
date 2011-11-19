@@ -19,6 +19,12 @@ module GitPair
       `git config --unset-all git-pair.authors "^#{name}$"`
     end
 
+    def reset
+      @reset = true
+      `git config --unset user.name`
+      `git config --unset user.email`
+    end
+
     def set_email_template(email)
       @config_changed = true
       `git config git-pair.email "#{email}"`
@@ -26,6 +32,10 @@ module GitPair
 
     def config_change_made?
       @config_changed
+    end
+
+    def reset?
+      @reset
     end
 
     def switch(abbreviations)

@@ -20,6 +20,7 @@ And here's how to use it!
         -e, --set-email TEMPLATE         Set the email template. A value like devs@example.com
                                          will be interpolated with the current authors' initials
                                          into something like devs+aa+bb@example.com.
+        -x, --reset                      Reset to name and email in global config.
 
     Switching authors:
       git pair AA [BB]                   Where AA and BB are any abbreviation of an

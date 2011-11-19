@@ -14,6 +14,7 @@ begin
     opts.on("-e", "--set-email TEMPLATE", "Set the email template. A value like devs@example.com",
                                           "will be interpolated with the current authors' initials",
                                           "into something like devs+aa+bb@example.com.") { |email| GitPair::Commands.set_email_template email }
+    opts.on("-x", "--reset",    "Reset to name and email in global config.") { GitPair::Commands.reset }
 
     opts.separator " "
     opts.separator ["#{$reverse} Switching authors: #{$reset}",
@@ -32,6 +33,8 @@ begin
     puts GitPair::Helpers.display_string_for_config
   elsif unused_options.any?
     GitPair::Commands.switch(unused_options)
+    puts GitPair::Helpers.display_string_for_current_info
+  elsif GitPair::Commands.reset?
     puts GitPair::Helpers.display_string_for_current_info
   elsif ARGV.empty?
     puts parser.help
