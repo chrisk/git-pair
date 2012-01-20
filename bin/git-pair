@@ -1,8 +1,12 @@
 #!/usr/bin/env ruby
 $LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/../lib"))
-
+require 'rubygems'
 require 'optparse'
 require 'git-pair'
+require 'net/http'
+require 'net/https'
+require 'json'
+
 
 begin
   banner = "\n#{$reverse} Configuration: #{$reset}"
@@ -14,6 +18,8 @@ begin
     opts.on("-e", "--set-email TEMPLATE", "Set the email template. A value like devs@example.com",
                                           "will be interpolated with the current authors' initials",
                                           "into something like devs+aa+bb@example.com.") { |email| GitPair::Commands.set_email_template email }
+    # opts.on("-s", "--sync-ldap SERVER [PORT]", "Will replace all authors with list from ldap server") { |server, port| GitPair::Commands.sync_ldap server }
+    opts.on("-s", "--sync-json", "Will replace all authors with list from the square people server") { |url| GitPair::Commands.sync_json() }
 
     opts.separator " "
     opts.separator ["#{$reverse} Switching authors: #{$reset}",

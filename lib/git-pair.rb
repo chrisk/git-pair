@@ -1,6 +1,8 @@
+
 $bold, $reverse, $red, $reset = "\e[1m", "\e[7m", "\e[91m", "\e[0m"
 
 module GitPair
+  SQUARE_PEOPLE_SYNC_URL = "https://people.squareup.com/people.json"
 
   VERSION = File.read(File.join(File.dirname(__FILE__), "git-pair", "VERSION")).strip
 
@@ -43,6 +45,21 @@ module GitPair
       `git config user.name "#{sorted_names.map{|n| Helpers.tidy_name(n)}.join(' + ')}"`
       initials = Helpers.email_aliases_from_authors(names.uniq)
       `git config user.email "#{Helpers.email(*initials)}"`
+    end
+
+    def sync_json
+      url = URI.parse(SQUARE_PEOPLE_SYNC_URL)
+      http = Net::HTTP.new(url.host, url.port)
+      http.use_ssl = true
+      request = Net::HTTP::Get.new(url.path)
+      response = http.start {|http| http.request(request) }
+
+      `git config --unset-all git-pair.authors`
+
+      users_json = JSON.parse(response.body)
+      users_json.each do |user|
+        add "#{user['First']} #{user['Last']} <#{user['Email'].gsub(/@.*/, '')}>"
+      end
     end
 
     extend self
