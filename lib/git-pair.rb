@@ -33,14 +33,15 @@ module GitPair
       raise MissingConfigurationError, "Please set the email template first" if Helpers.email_template.empty?
 
       names = abbreviations.map { |abbrev|
-        name = Helpers.author_name_from_abbreviation(abbrev)
+        name = Helpers.author_name_from_alias(abbrev)
         raise NoMatchingAuthorsError, "no authors matched #{abbrev}" if name.nil?
         name
       }
-
-      sorted_names = names.uniq.sort_by { |name| name.split.last }
-      `git config user.name "#{sorted_names.join(' + ')}"`
-      initials = sorted_names.map { |name| name.split.map { |word| word[0].chr }.join.downcase }
+      
+      
+      sorted_names = names.uniq.sort_by { |name| Helpers.tidy_name(name).split.last }
+      `git config user.name "#{sorted_names.map{|n| Helpers.tidy_name(n)}.join(' + ')}"`
+      initials = Helpers.email_aliases_from_authors(names.uniq)
       `git config user.email "#{Helpers.email(*initials)}"`
     end
 
@@ -81,6 +82,14 @@ module GitPair
       `git config --get user.email`.strip
     end
 
+    def author_name_from_alias(al)
+      author_names.each do |name|
+        return name if name =~ /<#{al}>/
+      end
+      
+      author_name_from_abbreviation(al)
+    end
+
     def author_name_from_abbreviation(abbrev)
       # initials
       author_names.each do |name|
@@ -96,6 +105,20 @@ module GitPair
       author_names.detect do |name|
         name =~ /#{abbrev.split("").join(".*")}/i
       end
+    end
+    
+    def email_aliases_from_authors(authors)
+      authors.map do |name|
+        if name =~ /<([^>]+)>/
+          $1
+        else
+          name.split.map { |word| word[0].chr }.join.downcase
+        end
+      end
+    end
+
+    def tidy_name(author_name)
+      author_name.gsub(/<[^>]+>/, '').strip
     end
 
     def abort(error_message, extra = "")
